@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState } from "react";
 import DashboardStats from "./DashBoardStats";
 import ProductTable from "./ProductTable";
@@ -9,14 +9,16 @@ import ProductFormModal from "./AddProduct";
 import LaptopBarchart from "./LaptopBarchart";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
+import AddadminFormModal from "./Addadmin";
 
 const AdminMain = () => {
   const [showModal, setShowModal] = useState(false);
+  const [showaddAdminModal, setshowaddAdminModal] = useState(false);
   return (
     <>
       <Navbar />
       <div className="flex">
-        <Sidebar setShowModal={setShowModal}/>
+        <Sidebar setShowModal={setShowModal} setshowaddAdminModal={setshowaddAdminModal} />
         <div className="  hide-scrollbar flex-1 p-5 overflow-y-auto h-screen">
           <DashboardStats />
           <div className="flex gap-4">
@@ -33,6 +35,10 @@ const AdminMain = () => {
           </div>
           {showModal && (
             <ProductFormModal onClose={() => setShowModal(false)} />
+          )}
+
+          {showaddAdminModal && (
+            <AddadminFormModal onClose={() => setshowaddAdminModal(false)} />
           )}
         </div>
       </div>

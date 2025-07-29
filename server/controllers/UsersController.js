@@ -1,6 +1,52 @@
 const EStoreauthModel = require("../Model/authModel");
 const nodemailer = require("nodemailer");
+const jwt = require("jsonwebtoken");
+const SignIn = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await EStoreauthModel.findOne({ email });
 
+    if (!user) {
+      return res.send({
+        error: "INVALID EMAIL",
+        msg: "Email does not exists.",
+      });
+    }
+
+    if (password !== user.password) {
+      return res.send({
+        error: "INVALID PASSWORD",
+        msg: "Incorrect password.",
+      });
+    }
+
+    // ✅ JWT payload
+    const payload = {
+      id: user._id,
+      email: user.email,
+      name: user.firstName + " " + user.lastName,
+      role: user.role,
+    };
+
+    // ✅ Generate JWT token
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "24h",
+    });
+
+    // ✅ Send response with token
+    console.log("Sign-in successful");
+
+    return res.status(200).json({
+      message: "Sign-in successful",
+      jwtToken: token, // your requested key name
+      user: payload,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Server error", error: error.message });
+  }
+};
 const addUser = async (req, res) => {
   try {
     const { firstName, lastName, email, password, role } = req.body;
@@ -67,7 +113,7 @@ const addUser = async (req, res) => {
           } else {
             res
               .status(201)
-              .json({ message: "Mail sended to user", emailResponse });
+              .json({ message: `Enter Opt sent to ${email}`, emailResponse });
           }
         });
       }
@@ -107,17 +153,17 @@ const verifyUser = async (req, res) => {
           await user.save();
         } else {
           return res.status(400).json({
-            message: "OTP HAS BEEN EXPIRED",
+            error: "OTP HAS BEEN EXPIRED",
           });
         }
       } else {
         return res
           .status(400)
-          .json({ message: "User otpExpiresAt condtion get flase", user });
+          .json({ error: "User otpExpiresAt condtion get flase", user });
       }
     } else {
       return res.status(400).json({
-        message: "OTP DOEST NOT MATCH TO THE GIVEN OTP",
+        error: "OTP DOEST NOT MATCH TO THE GIVEN OTP",
       });
     }
   } catch (error) {
@@ -125,4 +171,4 @@ const verifyUser = async (req, res) => {
   }
 };
 
-module.exports = { addUser, verifyUser };
+module.exports = { addUser, verifyUser, SignIn };
