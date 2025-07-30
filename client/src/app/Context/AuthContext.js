@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
   const SignUp = async (body) => {
     try {
       const res = await API.post("/auth/addUser", body);
-      console.log("Response",res?.data);
+      console.log("Response", res?.data);
 
       return res?.data;
     } catch (error) {

@@ -1,5 +1,5 @@
+import { AuthContext } from "@/app/Context/AuthContext";
 import React, { useContext, useState } from "react";
-import { AuthContext } from "../Context/AuthContext";
 
 const AddadminFormModal = ({ onClose }) => {
   const { SignUp, VerifyOtp } = useContext(AuthContext);
@@ -73,18 +73,25 @@ const AddadminFormModal = ({ onClose }) => {
       setErrors({ otp: "OTP is required." });
       return;
     }
+
+    if (!email) {
+      setErrors({ otp: "Email is required." });
+      return;
+    }
     const optObj = {
       email,
       otp,
     };
     // TODO: Verify OTP with backend here
     const res = await VerifyOtp(optObj);
-
-    console.log("OTP Submitted:", res);
-    setTimeout(() => {
-      setmsg(res.message);
-    }, 2000);
-    if (onClose) onClose(); // Close modal on success
+    if (res.error) {
+      setErrors({ otp: res.error });
+    } else {
+      setTimeout(() => {
+        setmsg(res.message);
+      }, 2000);
+      onClose()
+    }
   };
 
   return (
