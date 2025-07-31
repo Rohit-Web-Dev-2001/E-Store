@@ -5,8 +5,10 @@ const {
   verifyUser,
   SignIn,
   SearchAdmin,
+  getUsersData,
 } = require("../controllers/UsersController");
 const EStoreauthModel = require("../Model/authModel");
+const ensureAuthenticated = require("../Middleware/Authenticator");
 
 const Dummy = async (req, res) => {
   try {
@@ -19,6 +21,7 @@ const Dummy = async (req, res) => {
   }
 };
 // Login Route
+Userrouter.get("/getUsersData",ensureAuthenticated ,getUsersData);
 
 Userrouter.post("/SignIn", SignIn);
 // http://localhost:8000/auth/SignIn

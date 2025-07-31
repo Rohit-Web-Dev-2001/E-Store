@@ -1,7 +1,9 @@
 import React from "react";
 import { FaHome, FaBox, FaUsers } from "react-icons/fa";
 
-const Sidebar = ({ setShowModal, setshowaddAdminModal }) => {
+const Sidebar = (props) => {
+  const { setShowModal, setshowaddAdminModal, setshowaddRmoveAdminModal } =
+    props;
   return (
     <div className="w-64 max-h-screen overflow-y-auto bg-gray-900 text-white shadow-md flex flex-col p-4 space-y-4">
       <div className="text-2xl font-bold mb-4">Admin</div>
@@ -65,7 +67,12 @@ const Sidebar = ({ setShowModal, setshowaddAdminModal }) => {
           >
             Add Admin
           </span>
-          <span className="p-2 rounded cursor-pointer hover:bg-gray-700">
+          <span
+            className="p-2 rounded cursor-pointer hover:bg-gray-700"
+            onClick={() => {
+              setshowaddRmoveAdminModal(true);
+            }}
+          >
             Remove Admin
           </span>
         </div>

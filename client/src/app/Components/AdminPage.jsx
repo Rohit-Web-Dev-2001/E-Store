@@ -15,7 +15,7 @@ import RemoveAdminModal from "./AdminComponents/RemoveAdmin";
 const AdminMain = () => {
   const [showModal, setShowModal] = useState(false);
   const [showaddAdminModal, setshowaddAdminModal] = useState(false);
-  const [showaddRmoveAdminModal, setshowaddRmoveAdminModal] = useState(true);
+  const [showaddRmoveAdminModal, setshowaddRmoveAdminModal] = useState(false);
 
   return (
     <>
@@ -24,6 +24,7 @@ const AdminMain = () => {
         <Sidebar
           setShowModal={setShowModal}
           setshowaddAdminModal={setshowaddAdminModal}
+          setshowaddRmoveAdminModal={setshowaddRmoveAdminModal}
         />
         <div className="  hide-scrollbar flex-1 p-5 overflow-y-auto h-screen">
           <DashboardStats />

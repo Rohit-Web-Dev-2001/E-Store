@@ -4,6 +4,7 @@ import axios from "axios";
 import { API } from "@/Utils/Utils";
 import { createContext, useReducer } from "react";
 import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 // Initial state setup from cookies
 let initialState = {};
@@ -109,6 +110,41 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const getUsersforAdmin = async (authdata) => {
+    try {
+      API.interceptors.request.use((req) => {
+        req.headers.authorization = `bearer ${authdata.jwtToken}`;
+        return req;
+      });
+      const res = await API.get("/auth/getUsersData");
+
+      return res?.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const checkTokken = () => {
+    const { jwtToken } = state;
+
+    if (!jwtToken) return;
+    
+
+    try {
+      const decoded = jwtDecode(jwtToken);
+      const isExpired = decoded.exp * 1000 < Date.now(); // exp is in seconds
+
+      if (isExpired) {
+        document.cookie =
+          "E-StoreAuth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        dispatch({ type: "LOGOUT" });
+      }
+    } catch (err) {
+      console.error("Invalid token", err);
+      // Optional: force logout if token is invalid
+      dispatch({ type: "LOGOUT" });
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -118,6 +154,8 @@ export const AuthProvider = ({ children }) => {
         dispatch,
         SignUp,
         SignIn,
+        getUsersforAdmin,
+        checkTokken,
       }}
     >
       {children}

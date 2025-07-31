@@ -6,8 +6,14 @@ import Navbar from "./Components/Navbar";
 import { AuthContext } from "./Context/AuthContext";
 
 export default function Home() {
-  const {AuthData} = useContext(AuthContext)
- 
+  const { AuthData, checkTokken } = useContext(AuthContext);
+  useEffect(() => {
+    if (AuthData?.jwtToken) {
+      console.log(AuthData?.jwtToken);
+
+      checkTokken();
+    }
+  }, [AuthData]);
   return (
     <>
       <Navbar />
