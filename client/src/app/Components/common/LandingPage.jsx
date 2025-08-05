@@ -1,15 +1,31 @@
-import React, { useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { AdminContext } from "@/app/Context/AdminContext";
+import { useRouter } from "next/navigation";
 
 const LandingPage = () => {
   const productRef = useRef(null);
-
+  const router = useRouter();
+  const { getProducts } = useContext(AdminContext);
+  const [PrductData, setPrductData] = useState([]);
   const scrollToProducts = () => {
     productRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const handleNavigate = (Category) => {
+    router.push(`Pages/Products/Category/${Category}`);
+  };
+  const getdata = async () => {
+    const res = await getProducts();
+    console.log(res);
+
+    setPrductData(res);
+  };
+  useEffect(() => {
+    getdata();
+  }, []);
   const laptops = [
     {
       title: "MacBook Air M2",
@@ -43,7 +59,8 @@ const LandingPage = () => {
     },
     {
       title: "ASUS ROG Zephyrus G14",
-      description: "Gaming powerhouse with RTX 3060 & Ryzen 7.13.6‑inch, 256 GB SSD, 8 GB RAM",
+      description:
+        "Gaming powerhouse with RTX 3060 & Ryzen 7.13.6‑inch, 256 GB SSD, 8 GB RAM",
       price: 119999,
       image:
         "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcRj1IYSl7dcJjqcUoGl1GOTAUpOuu9-ujTIcPoUvgl8KXfZTmA",
@@ -69,7 +86,19 @@ const LandingPage = () => {
       },
     ],
   };
+  const truncateDescription = (text, wordLimit = 13) => {
+    const words = text.split(" ");
+    return words.length > wordLimit
+      ? words.slice(0, wordLimit).join(" ") + "..."
+      : text;
+  };
 
+  const truncateName = (text, wordLimit = 3) => {
+    const words = text.split(" ");
+    return words.length > wordLimit
+      ? words.slice(0, wordLimit).join(" ") + "..."
+      : text;
+  };
   return (
     <div className="bg-white text-gray-800">
       {/* Hero Section */}
@@ -102,7 +131,10 @@ const LandingPage = () => {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Phones */}
-          <div className="border border-gray-200 rounded-md p-6 shadow-sm hover:shadow-md transition">
+          <div
+            className="border border-gray-200 rounded-md p-6 shadow-sm hover:shadow-md transition cursor-pointer"
+            onClick={() => handleNavigate("Mobile Phones")}
+          >
             <h3 className="text-xl font-semibold mb-3 text-[#101828]">
               Smartphones
             </h3>
@@ -118,7 +150,10 @@ const LandingPage = () => {
           </div>
 
           {/* Laptops */}
-          <div className="border border-gray-200 rounded-md p-6 shadow-sm hover:shadow-md transition">
+          <div
+            className="border border-gray-200 rounded-md p-6 shadow-sm hover:shadow-md transition cursor-pointer"
+            onClick={() => handleNavigate("Laptops")}
+          >
             <h3 className="text-xl font-semibold mb-3 text-[#101828]">
               Laptops
             </h3>
@@ -136,6 +171,41 @@ const LandingPage = () => {
       </section>
 
       {/* Product Carousel Section */}
+      <section ref={productRef} className="py-12 px-6 max-w-6xl mx-auto">
+        <h2 className="text-2xl font-bold text-center mb-10 text-[#101828]">
+          Top Smart Phones
+        </h2>
+        <Slider {...settings}>
+          {PrductData.slice(0, 5).map((mobilePhones, index) => (
+            <div key={index} className="px-3">
+              <div className="border border-gray-200 rounded-md shadow-sm hover:shadow-md transition  h-full flex flex-col">
+                <div className="p-2  flex items-center justify-center">
+                  <div className="w-[250px] h-[300px]  flex items-center justify-center">
+                    <img
+                      src={mobilePhones.image}
+                      alt={mobilePhones.productName}
+                      className="w-full  object-cover"
+                    />
+                  </div>
+                </div>
+
+                <h3 className="text-lg px-2 font-semibold text-[#101828]">
+                  {truncateName(mobilePhones.productName)}
+                </h3>
+                <p className="text-sm text-gray-600 my-2 px-2 ">
+                  {truncateDescription(mobilePhones.productDescription)}
+                </p>
+                <p className="text-[#101828] px-2  font-semibold text-base mb-2">
+                  ₹{mobilePhones.price}
+                </p>
+                <button className="mt-auto bg-[#101828] text-white py-2 px-4 rounded-sm text-sm font-medium hover:opacity-90">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          ))}
+        </Slider>
+      </section>
       <section ref={productRef} className="py-12 px-6 max-w-6xl mx-auto">
         <h2 className="text-2xl font-bold text-center mb-10 text-[#101828]">
           Top Laptops

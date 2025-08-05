@@ -21,6 +21,7 @@ const ProductSchema = mongoose.Schema({
   category: {
     type: String,
     required: true,
+    enum: ["Mobile Phones", "Laptops"], 
   },
   sold: {
     type: Number,
@@ -33,5 +34,5 @@ const ProductSchema = mongoose.Schema({
   },
 });
 
-const ProductModel = mongoose.model("Products", ProductSchema);
+const ProductModel = mongoose.model("E-StoreProducts", ProductSchema);
 module.exports = ProductModel;

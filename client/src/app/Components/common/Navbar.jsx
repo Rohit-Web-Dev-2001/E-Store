@@ -2,7 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../Context/AuthContext";
+import { AuthContext } from "../../Context/AuthContext";
+import { FiShoppingCart } from "react-icons/fi";
 
 const Navbar = () => {
   const { AuthData, logout } = useContext(AuthContext);
@@ -17,11 +18,11 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout(); // Clears context and cookies
-    router.refresh(); // Triggers re-render
+    router.push("/"); // Triggers re-render
   };
 
   return (
-    <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
+    <nav className="bg-white shadow-md px-6 py-2 flex justify-between items-center">
       {/* Left: Brand and User Name */}
       <div className="font-bold text-blue-600 leading-tight">
         <span className="text-2xl font-bold">E-Store</span>
@@ -43,7 +44,7 @@ const Navbar = () => {
           <li className="hover:text-blue-500 cursor-pointer">About</li>
           <li className="hover:text-blue-500 cursor-pointer">Contact</li>
 
-          {AuthData?.role === "user" && (
+          {isMounted && AuthData?.role === "user" && (
             <li className="hover:text-blue-500 cursor-pointer">Support</li>
           )}
 
@@ -56,6 +57,16 @@ const Navbar = () => {
             </li>
           )}
         </ul>
+
+        {isMounted && AuthData?.role === "user" && (
+          <li
+            className="hover:text-blue-500 cursor-pointer flex gap-1"
+            onClick={() => router.push("/Cart")}
+          >
+            <span>Cart</span>
+            <FiShoppingCart size={18} />
+          </li>
+        )}
 
         {/* Auth Button */}
         <div className="relative group p-2 z-10">

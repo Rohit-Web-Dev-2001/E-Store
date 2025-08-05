@@ -1,16 +1,23 @@
-import React, { useState } from "react";
+import { AdminContext } from "@/app/Context/AdminContext";
+import { AuthContext } from "@/app/Context/AuthContext";
+import { useRouter } from "next/navigation";
+import React, { useContext, useState } from "react";
 
 const ProductFormModal = ({ onClose }) => {
+  const router = useRouter();
+  const { addProduct } = useContext(AdminContext);
+  const { AuthData } = useContext(AuthContext);
   const [product, setProduct] = useState({
-    name: "",
-    category: "Phone",
-    description: "",
+    productName: "",
     price: "",
+    category: "",
     stock: "",
     image: "",
+    productDescription: "",
   });
 
   const [errors, setErrors] = useState({});
+  const [success, setsuccess] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,44 +27,60 @@ const ProductFormModal = ({ onClose }) => {
 
   const validate = () => {
     const newErrors = {};
-    if (!product.name.trim()) newErrors.name = "Product name is required.";
+    if (!product.productName.trim())
+      newErrors.productName = "Product name is required.";
     if (!product.category.trim()) newErrors.category = "Category is required.";
-    if (!product.description.trim()) newErrors.description = "Description is required.";
-    if (!product.price.trim()) newErrors.price = "Price is required.";
-    if (!product.stock.trim()) newErrors.stock = "Stock quantity is required.";
-    if (!product.image.trim()) newErrors.image = "Image URL is required.";
+    if (!product.productDescription.trim())
+      newErrors.productDescription = "Description is required.";
+    if (!product.price) newErrors.price = "Price is required.";
+    if (!product.stock) newErrors.stock = "Stock quantity is required.";
+    if (!product.image.trim()) {
+      newErrors.image = "Image URL is required.";
+    } else if (!product.image.startsWith("https://")) {
+      newErrors.image = "Image URL must start with 'https://'";
+    }
 
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-
-    console.log("Submitted Product:", product);
-    if (onClose) onClose();
+    const res = await addProduct(AuthData, product);
+    setsuccess(true);
+    setTimeout(() => {
+      setsuccess(false);
+      if (onClose) onClose();
+    }, 1500);
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/30">
       <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-lg relative">
-        <h2 className="text-xl font-semibold mb-4">Add Product</h2>
+        <h2 className="text-xl font-semibold mb-4">
+          Add Product{" "}
+          <span className="text-sm text-green-500 mx-2">
+            {success && "Product has been added to E-Store"}
+          </span>
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <input
               type="text"
-              name="name"
+              name="productName"
               placeholder="Product Name"
               className="w-full p-2 border rounded"
-              value={product.name}
+              value={product.productName}
               onChange={handleChange}
             />
-            {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+            {errors.productName && (
+              <p className="text-red-500 text-sm">{errors.productName}</p>
+            )}
           </div>
 
           <div>
@@ -67,22 +90,29 @@ const ProductFormModal = ({ onClose }) => {
               value={product.category}
               onChange={handleChange}
             >
-              <option value="Phone">Phone</option>
-              <option value="Laptop">Laptop</option>
+              <option value="">Select Category</option>
+              <option value="Mobile Phones">Mobile Phones</option>
+              <option value="Laptops">Laptops</option>
             </select>
-            {errors.category && <p className="text-red-500 text-sm">{errors.category}</p>}
+            {errors.category && (
+              <p className="text-red-500 text-sm">{errors.category}</p>
+            )}
           </div>
 
           <div>
             <textarea
-              name="description"
+              name="productDescription"
               placeholder="Description"
               className="w-full p-2 border rounded"
               rows="3"
-              value={product.description}
+              value={product.productDescription}
               onChange={handleChange}
             />
-            {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
+            {errors.productDescription && (
+              <p className="text-red-500 text-sm">
+                {errors.productDescription}
+              </p>
+            )}
           </div>
 
           <div className="flex gap-4">
@@ -95,7 +125,9 @@ const ProductFormModal = ({ onClose }) => {
                 value={product.price}
                 onChange={handleChange}
               />
-              {errors.price && <p className="text-red-500 text-sm">{errors.price}</p>}
+              {errors.price && (
+                <p className="text-red-500 text-sm">{errors.price}</p>
+              )}
             </div>
             <div className="w-1/2">
               <input
@@ -106,7 +138,9 @@ const ProductFormModal = ({ onClose }) => {
                 value={product.stock}
                 onChange={handleChange}
               />
-              {errors.stock && <p className="text-red-500 text-sm">{errors.stock}</p>}
+              {errors.stock && (
+                <p className="text-red-500 text-sm">{errors.stock}</p>
+              )}
             </div>
           </div>
 
@@ -119,7 +153,9 @@ const ProductFormModal = ({ onClose }) => {
               value={product.image}
               onChange={handleChange}
             />
-            {errors.image && <p className="text-red-500 text-sm">{errors.image}</p>}
+            {errors.image && (
+              <p className="text-red-500 text-sm">{errors.image}</p>
+            )}
           </div>
 
           <div className="flex justify-end gap-4">
@@ -134,7 +170,7 @@ const ProductFormModal = ({ onClose }) => {
               type="submit"
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
-              Submit
+              Save and continue
             </button>
           </div>
         </form>

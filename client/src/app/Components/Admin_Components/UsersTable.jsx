@@ -1,9 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./Style.css";
-import { AuthContext } from "../Context/AuthContext";
+import { AuthContext } from "@/app/Context/AuthContext";
+import { AdminContext } from "@/app/Context/AdminContext";
+
 
 const UserTable = () => {
-  const { getUsersforAdmin, AuthData } = useContext(AuthContext);
+  const {  AuthData } = useContext(AuthContext);
+  const { getUsersforAdmin } = useContext(AdminContext);
   const [userData, setUserData] = useState([]);
 
   const handlegetData = async () => {
@@ -17,7 +20,7 @@ const UserTable = () => {
 
   return (
     <div className="mt-6 p-4 bg-white shadow-md rounded-xl">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4 text-center">Users</h2>
+      <h2 className="text-lg font-semibold text-gray-800 mb-4 ">Custumor</h2>
 
       <div className="max-h-[100vh] overflow-y-auto hide-scrollbar">
         <table className="min-w-full text-sm text-gray-700">
@@ -25,6 +28,7 @@ const UserTable = () => {
             <tr className="border-b border-gray-500">
               <th className="py-2 px-1 text-center">S.no</th>
               <th className="py-2 px-1 text-center">Username</th>
+              <th className="py-2 px-1 text-center">email</th>
               {/* <th className="py-2 px-4 text-center">Status</th> */}
             </tr>
           </thead>
@@ -41,6 +45,10 @@ const UserTable = () => {
                   <td className="py-2 px-4 text-center">{i + 1}</td>
                   <td className="py-2 px-4 text-center">
                     {user.firstName} {user.lastName}
+                  </td>
+
+                   <td className="py-2 px-4 text-center">
+                    {user.email} 
                   </td>
                   {/* 
                   <td className="py-2 px-4 text-center">

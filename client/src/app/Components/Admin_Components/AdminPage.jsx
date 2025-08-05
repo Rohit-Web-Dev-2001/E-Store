@@ -4,13 +4,13 @@ import DashboardStats from "./DashBoardStats";
 import ProductTable from "./ProductTable";
 import UserTable from "./UsersTable";
 import UserPieChart from "./PieChart";
-import ProductBarChart from "./PhoneBarchart";
+import ProductBarChart from "./ProductBarchart";
 import ProductFormModal from "./AddProduct";
 import LaptopBarchart from "./LaptopBarchart";
-import Navbar from "./Navbar";
+import Navbar from "../common/Navbar";
 import Sidebar from "./Sidebar";
-import AddadminFormModal from "./AdminComponents/Addadmin";
-import RemoveAdminModal from "./AdminComponents/RemoveAdmin";
+import AddadminFormModal from "./Addadmin";
+import RemoveAdminModal from "./RemoveAdmin";
 
 const AdminMain = () => {
   const [showModal, setShowModal] = useState(false);
@@ -19,27 +19,29 @@ const AdminMain = () => {
 
   return (
     <>
-      <Navbar />
       <div className="flex">
         <Sidebar
           setShowModal={setShowModal}
           setshowaddAdminModal={setshowaddAdminModal}
           setshowaddRmoveAdminModal={setshowaddRmoveAdminModal}
         />
-        <div className="  hide-scrollbar flex-1 p-5 overflow-y-auto h-screen">
+        <div className="  hide-scrollbar flex-1 overflow-y-auto h-screen">
+          <Navbar />
+
           <DashboardStats />
-          <div className="flex gap-4">
-            <ProductBarChart />
-            <LaptopBarchart />
+          <div className="flex flex-col lg:flex-row gap-4 items-center">
+            <ProductBarChart Catagory="Mobile Phones" />
+            <ProductBarChart Catagory="Laptops" />
           </div>
-          <div className="flex gap-4">
-            <div className="w-3/4">
+          <div className="flex flex-col lg:flex-row gap-4 items-start w-full">
+            <div className="w-full lg:w-3/5">
               <ProductTable />
             </div>
-            <div className=" w-1/4">
+            <div className="w-full lg:w-2/5">
               <UserTable />
             </div>
           </div>
+
           {showModal && (
             <ProductFormModal onClose={() => setShowModal(false)} />
           )}
@@ -48,7 +50,9 @@ const AdminMain = () => {
             <AddadminFormModal onClose={() => setshowaddAdminModal(false)} />
           )}
           {showaddRmoveAdminModal && (
-            <RemoveAdminModal onClose={() => setshowaddRmoveAdminModal(false)} />
+            <RemoveAdminModal
+              onClose={() => setshowaddRmoveAdminModal(false)}
+            />
           )}
         </div>
       </div>

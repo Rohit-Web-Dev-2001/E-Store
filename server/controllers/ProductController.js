@@ -11,8 +11,46 @@ const getProducts = async (req, res) => {
 };
 const addProducts = async (req, res) => {
   try {
+    const { role } = req.admin;
+    if (!role === "admin") {
+      res.status(500).json({ error: "Only Admin can access users data" });
+    }
     const { productName, price, category, stock, image, productDescription } =
       req.body;
+    if (
+      !productName?.trim() ||
+      !price ||
+      !category?.trim() ||
+      !stock ||
+      !image?.trim() ||
+      !productDescription?.trim()
+    ) {
+      return res.status(400).json({
+        message: "All fields are required and must not be empty.",
+        Fields: {
+          productName: productName,
+          price: price,
+          category: category,
+          stock: stock,
+          image: image,
+          productDescription: productDescription,
+        },
+      });
+    }
+    const newProduct = new ProductModel({
+      productName,
+      price,
+      category,
+      stock,
+      image,
+      productDescription,
+    });
+
+    await newProduct.save();
+
+    res
+      .status(201)
+      .json({ message: "Product added successfully", product: newProduct });
   } catch (error) {
     console.log(error);
   }
