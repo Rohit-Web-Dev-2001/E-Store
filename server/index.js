@@ -11,7 +11,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
-  res.send({ mgs: "Server is ready to use" });
+  res.send("Server is ready to use 🔥");
 });
 app.use("/auth", Userrouter);
 app.use("/products", ProductRouter);
