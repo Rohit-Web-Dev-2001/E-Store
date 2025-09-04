@@ -2,7 +2,7 @@
 import { AuthContext } from "@/app/Context/AuthContext";
 import React, { useContext, useEffect } from "react";
 
-const Page = () => {
+export default function Page() {
   const { AuthData, checkTokken } = useContext(AuthContext);
   useEffect(() => {
     if (AuthData?.jwtToken) {
@@ -14,4 +14,3 @@ const Page = () => {
   return <div>Hello</div>;
 };
 
-export default Page;
