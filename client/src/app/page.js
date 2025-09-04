@@ -5,10 +5,13 @@ import LandingPage from "./Components/common/LandingPage";
 import Navbar from "./Components/common/Navbar";
 import { AuthContext } from "./Context/AuthContext";
 import CartSideBar from "./Components/common/CartSideBar";
+import BuyNowModel from "./Components/common/Products/BuyNowModel";
+import { useCart } from "./Context/ToggleCart";
 
 export default function Home() {
   const { AuthData, checkTokken } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
+  const { isOrderModalOpen } = useCart();
 
   useEffect(() => {
     if (AuthData?.jwtToken) {
@@ -40,8 +43,9 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <CartSideBar />
+      {AuthData?.role === "user" && <CartSideBar />}
       <LandingPage />
+      {isOrderModalOpen && <BuyNowModel />}
     </>
   );
 }

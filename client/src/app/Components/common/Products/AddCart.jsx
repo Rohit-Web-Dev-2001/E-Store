@@ -3,10 +3,12 @@ import React, { useState, useContext } from "react";
 import Cookies from "js-cookie";
 import { AuthContext } from "@/app/Context/AuthContext";
 import { AdminContext } from "@/app/Context/AdminContext";
+import { useCart } from "@/app/Context/ToggleCart";
 
 const AddToCartModal = ({ cartproduct, onClose, onBuyNow }) => {
   const [quantity, setQuantity] = useState(1);
-  const { addtocart } = useContext(AdminContext);
+  // const { addtocart } = useContext(AdminContext);
+  const { addtocart } = useCart();
   const { AuthData } = useContext(AuthContext);
   const [notification, setNotification] = useState(null);
 
@@ -18,7 +20,6 @@ const AddToCartModal = ({ cartproduct, onClose, onBuyNow }) => {
     };
 
     const res = await addtocart(AuthData, CartObj);
-    console.log(res);
 
     setNotification({
       message: res.message,

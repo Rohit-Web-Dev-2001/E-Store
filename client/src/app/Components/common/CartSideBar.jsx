@@ -1,38 +1,69 @@
+"use client";
+import { AdminContext } from "@/app/Context/AdminContext";
 import { AuthContext } from "@/app/Context/AuthContext";
 import { useCart } from "@/app/Context/ToggleCart";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 const CartSideBar = () => {
-  const { isOpen, toggleCart } = useCart();
+  const {
+    isOpen,
+    toggleCart,
+    cartItems,
+    setCartItems,
+    setIsOrderModalOpen,
+    setBuyNowItem,
+  } = useCart();
   const { AuthData } = useContext(AuthContext);
-
-  // Example cart data
-  const cartItems = [
-    {
-      id: 1,
-      name: "iPhone 15",
-      price: 79999,
-      image: "https://via.placeholder.com/60",
-    },
-    {
-      id: 2,
-      name: "Samsung S24",
-      price: 74999,
-      image: "https://via.placeholder.com/60",
-    },
-  ];
-
+  const { getCartProducts, RemoveCartProduct } = useContext(AdminContext);
   // Remove item
-  const handleRemove = (id) => {
-    console.log("Removed item with ID:", id);
-    // Implement remove logic here
+  const handleRemove = async (AuthData, id) => {
+    await RemoveCartProduct(AuthData, id);
+    const res = await getCartProducts(AuthData);
+
+    setCartItems(res.products || []);
+
+    // TODO: Call API to remove item
   };
 
   // Buy single item
-  const handleBuy = (id) => {
-    console.log("Buying item with ID:", id);
-    // Implement buy logic here
+  const handleBuy = async (
+    productId,
+    ProductName,
+    ProductImage,
+    ProductDescription,
+    ProductPrice
+  ) => {
+    let ProductObj = {
+      productId,
+      ProductName,
+      ProductImage,
+      ProductDescription,
+      ProductPrice,
+    };
+
+    setIsOrderModalOpen(true);
+    setBuyNowItem(ProductObj);
+    // TODO: Call API to buy single product
   };
+
+  // Fetch cart products
+  const fetchCartProducts = async (AuthData) => {
+    try {
+      const res = await getCartProducts(AuthData);
+
+      if (res.error) {
+        setCartItems([]);
+      }
+
+      setCartItems(res.products || []);
+    } catch (error) {
+      console.error("Error fetching cart:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCartProducts(AuthData);
+  }, []);
 
   return (
     <div
@@ -40,6 +71,7 @@ const CartSideBar = () => {
         isOpen ? "translate-x-0" : "translate-x-full"
       }`}
     >
+      {/* Header */}
       <div className="p-4 border-b flex justify-between items-center">
         <h2 className="text-lg font-semibold">{AuthData?.name || "Guest"}</h2>
         <button onClick={toggleCart} className="text-gray-500">
@@ -49,10 +81,13 @@ const CartSideBar = () => {
 
       {/* Cart Items */}
       <div className="p-4 space-y-4 overflow-y-auto h-[calc(100%-120px)]">
-        {cartItems.length > 0 ? (
+        {cartItems && cartItems.length > 0 ? (
           cartItems.map((item) => (
-            <div key={item.id} className="flex flex-col border-b pb-3">
-              <div className="flex items-center   gap-30">
+            <div
+              key={item._id || item.id}
+              className="flex flex-col border-b pb-3"
+            >
+              <div className="flex items-center gap-4">
                 <div>
                   <img
                     src={item.image}
@@ -61,35 +96,64 @@ const CartSideBar = () => {
                   />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-sm font-semibold">{item.name}</h3>
+                  <h3 className="text-sm font-semibold">{item.productName}</h3>
                   <p className="text-gray-500">₹{item.price}</p>
                 </div>
               </div>
 
               <div className="flex gap-2 mt-2">
                 <button
-                  onClick={() => handleRemove(item.id)}
+                  onClick={() => handleRemove(AuthData, item._id || item.id)}
                   className="flex-1 bg-red-500 text-white py-1 rounded hover:bg-red-600 text-sm"
                 >
                   Remove
                 </button>
                 <button
-                  onClick={() => handleBuy(item.id)}
-                  className="flex-1 bg-green-500 text-white py-1 rounded hover:bg-green-600 text-sm"
+                  disabled={item.stock === 0}
+                  onClick={() =>
+                    handleBuy(
+                      item._id,
+                      item.productName,
+                      item.image,
+                      item.productDescription,
+                      item.price
+                    )
+                  }
+                  className={`flex-1 ${
+                    item.stock === 0
+                      ? "bg-gray-500 "
+                      : "bg-blue-500 hover:bg-blue-600"
+                  } bg-blue-500 text-white py-1 rounded  text-sm`}
                 >
-                  Buy Now
+                  {item.stock === 0 ? "Out of Stock" : "Buy Now"}
                 </button>
               </div>
             </div>
           ))
         ) : (
-          <p className="text-gray-500 text-center mt-10">Cart is empty</p>
+          <div className="flex flex-col items-center justify-center mt-10">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png"
+              alt="empty cart"
+              className="w-20 h-20 opacity-70 mb-3"
+            />
+            <p className="text-gray-500 text-center text-lg">
+              No products in cart
+            </p>
+          </div>
         )}
       </div>
 
       {/* Footer */}
       <div className="p-4 border-t">
-        <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
+        <button
+          className={`w-full py-2 rounded text-white ${
+            cartItems.length > 0
+              ? "bg-blue-500 hover:bg-blue-600"
+              : "bg-gray-400 cursor-not-allowed"
+          }`}
+          disabled={cartItems.length === 0}
+        >
           Buy All
         </button>
       </div>

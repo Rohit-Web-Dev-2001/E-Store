@@ -10,7 +10,7 @@ const Navbar = () => {
   const { AuthData, logout } = useContext(AuthContext);
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
-  const { toggleCart } = useCart();
+  const { toggleCart, cartItems, LogOut } = useCart();
 
   useEffect(() => {
     setIsMounted(true);
@@ -19,6 +19,7 @@ const Navbar = () => {
   const isLoggedIn = !!AuthData?.jwtToken;
 
   const handleLogout = () => {
+    LogOut();
     logout(); // Clears context and cookies
     router.push("/"); // Triggers re-render
   };
@@ -43,11 +44,16 @@ const Navbar = () => {
           >
             Home
           </li>
-          <li className="hover:text-blue-500 cursor-pointer">About</li>
           <li className="hover:text-blue-500 cursor-pointer">Contact</li>
+          <li className="hover:text-blue-500 cursor-pointer">Support</li>
 
           {isMounted && AuthData?.role === "user" && (
-            <li className="hover:text-blue-500 cursor-pointer">Support</li>
+            <li
+              className="hover:text-blue-500 cursor-pointer"
+              onClick={() => router.push("/Pages/Orders")}
+            >
+              Orders
+            </li>
           )}
 
           {isMounted && AuthData?.role === "admin" && (
@@ -62,11 +68,15 @@ const Navbar = () => {
 
         {isMounted && AuthData?.role === "user" && (
           <li className="hover:text-yellow-500 cursor-pointer flex gap-1">
-            <button className="relative" onClick={()=>toggleCart()}>
+            <button className="relative" onClick={() => toggleCart()}>
               <FiShoppingCart size={25} />
-              <span className="absolute -top-2 -right-2 bg-blue-500 text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                5
-              </span>
+              {cartItems && cartItems.length > 0 ? (
+                <span className="absolute -top-2 -right-2 bg-blue-500 text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                  {cartItems.length}
+                </span>
+              ) : (
+                ""
+              )}
             </button>
 
             {/* {cartItems.length > 0 && (

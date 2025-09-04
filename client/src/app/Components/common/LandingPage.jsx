@@ -19,7 +19,6 @@ const LandingPage = () => {
   };
   const getdata = async () => {
     const res = await getProducts();
-    console.log(res);
 
     setPrductData(res);
   };

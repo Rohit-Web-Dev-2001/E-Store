@@ -2,11 +2,12 @@ import React from "react";
 import Navbar from "../Navbar";
 import ProductContainer from "./ProductContainer";
 
-const Main = ({Category}) => {
+const Main = ({ Category }) => {
   return (
     <div>
       <Navbar />
-      <ProductContainer Category={Category}/>
+      <ProductContainer Category={Category} />
+     
     </div>
   );
 };

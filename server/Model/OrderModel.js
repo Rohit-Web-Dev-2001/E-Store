@@ -1,60 +1,33 @@
-const { default: mongoose } = require("mongoose");
+import mongoose from "mongoose";
 
-const orderSchema = mongoose.Schema(
+const UserorderSchema = new mongoose.Schema(
   {
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      type: String,
       required: true,
     },
+    name: { type: String, required: true }, // root level
+    email: { type: String, required: true },
+    mobileNo: { type: String, required: true },
+    address: { type: String, required: true }, // single string
+
     products: [
       {
-        productId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Product",
-          required: true,
-        },
-        quantity: {
-          type: Number,
-          required: true,
-          min: 1,
-        },
-        price: {
-          type: Number,
-          required: true,
-        },
+        ProductId: { type: String, required: true },
+        ProductName: { type: String, required: true },
+        ProductDescription: { type: String },
+        ProductImage: { type: String },
+        ProductPrice: { type: Number },
+        Quantity: { type: Number },
+        TotalAmount: { type: Number, required: true },
       },
     ],
-    totalAmount: {
-      type: Number,
-      required: true,
-    },
-    paymentStatus: {
-      type: String,
-      enum: ["Pending", "Paid", "Failed"],
-      default: "Pending",
-    },
-    paymentId: {
-      type: String,
-    },
-    orderStatus: {
-      type: String,
-      enum: ["Processing", "Shipped", "Delivered", "Cancelled"],
-      default: "Processing",
-    },
-    shippingAddress: {
-      fullName: String,
-      address: String,
-      city: String,
-      state: String,
-      postalCode: String,
-      country: String,
-      phone: String,
-    },
   },
   { timestamps: true }
 );
 
-const EsotreOrder = mongoose.model("EsotreOrder", orderSchema);
 
-module.exports = EsotreOrder;
+
+const EsotreOrders = mongoose.model("EsotreOrders", UserorderSchema);
+
+export default EsotreOrders;

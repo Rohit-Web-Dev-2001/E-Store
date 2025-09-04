@@ -60,6 +60,34 @@ export const AdminProvider = ({ children }) => {
     }
   };
 
+  const getCartProducts = async (AuthData) => {
+    API.interceptors.request.use((req) => {
+      req.headers.authorization = `Bearer ${AuthData.jwtToken}`;
+      return req;
+    });
+    try {
+      const res = await API.get("/products/getcartproducts");
+
+      return res?.data;
+    } catch (error) {
+      console.error("Failed to fetch products", error);
+    }
+  };
+
+  const RemoveCartProduct = async (AuthData, Productid) => {
+    API.interceptors.request.use((req) => {
+      req.headers.authorization = `Bearer ${AuthData.jwtToken}`;
+      return req;
+    });
+    try {
+      const res = await API.delete(`/products/RemoveCartProduct/${Productid}`);
+
+      return res?.data;
+    } catch (error) {
+      console.error("Failed to fetch products", error);
+    }
+  };
+
   return (
     <AdminContext.Provider
       value={{
@@ -67,6 +95,8 @@ export const AdminProvider = ({ children }) => {
         addtocart,
         getProducts,
         addProduct,
+        getCartProducts,
+        RemoveCartProduct,
       }}
     >
       {children}

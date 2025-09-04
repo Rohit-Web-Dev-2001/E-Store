@@ -26,6 +26,7 @@ const ProductRow = ({ Category }) => {
 
   const fetchData = async () => {
     const res = await getProducts();
+
     setproducts(res || []);
   };
 
@@ -54,7 +55,7 @@ const ProductRow = ({ Category }) => {
     <div className="space-y-6 p-6 bg-gray-100">
       {products
         .filter((product) => product.category === matchedCategory)
-        .map((product) => ( 
+        .map((product) => (
           <div
             key={product._id}
             className="flex flex-col md:flex-row bg-white shadow p-4 rounded-md"
@@ -77,20 +78,36 @@ const ProductRow = ({ Category }) => {
                 <p className="text-gray-700 text-sm mb-3">
                   {product.productDescription}
                 </p>
-              </div>
-              <div className="flex gap-4">
-                <button
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                  onClick={() => {
-                    handelAddtoCart(product);
-                  }}
+
+                <span
+                  className={`py-2   ${
+                    product?.stock <= 3
+                      ? "text-red-500 "
+                      : product?.stock <= 10
+                      ? "text-yellow-500"
+                      : "text-green-500"
+                  }`}
                 >
-                  Add to Cart
-                </button>
-                <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-                  Buy Now
-                </button>
+                  {product?.stock === 0
+                    ? "Out of stock"
+                    : `Stock Left ${product?.stock}`}
+                </span>
               </div>
+              {product.stock > 0 && (
+                <div className=" my-3 flex gap-4">
+                  <button
+                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    onClick={() => {
+                      handelAddtoCart(product);
+                    }}
+                  >
+                    Add to Cart
+                  </button>
+                  <button className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                    Buy Now
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}
