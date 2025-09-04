@@ -7,7 +7,15 @@ const ProductRouter = require("./Routes/ProductRoute");
 require("dotenv").config();
 connectDB();
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://e-store-frontend-gold.vercel.app"
+    ],
+    credentials: true, // keep this if you're sending cookies or Authorization headers
+  })
+);
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
