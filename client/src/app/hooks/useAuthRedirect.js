@@ -1,6 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
-import { useContext } from "react";
 import { AuthContext } from "../Context/AuthContext";
 
 export const useAuthRedirect = (requiredRole = null, redirectTo = "/") => {
@@ -15,5 +14,5 @@ export const useAuthRedirect = (requiredRole = null, redirectTo = "/") => {
     if (requiredRole && AuthData?.role && AuthData.role !== requiredRole) {
       router.push(redirectTo);
     }
-  }, [AuthData, requiredRole, redirectTo]);
+  }, [AuthData, requiredRole, redirectTo, checkTokken, router]); // ✅ include them
 };
