@@ -14,4 +14,4 @@ const Page = () => {
   return <div>Hello</div>;
 };
 
-export default page;
+export default Page;
