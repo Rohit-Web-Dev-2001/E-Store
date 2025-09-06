@@ -23,7 +23,7 @@ This project is built using **MongoDB, Express.js, React, and Node.js** with JWT
 
 ---
 
-## 📂 Dummy Users to login 
+## 📂 Dummy credentials 
 ---
 
 - **Email:** User- anjali.chopra@gmail.com , Admin - rohit123@gmail.com 
